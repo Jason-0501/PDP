@@ -1,0 +1,12 @@
+package com.example.policy.repository;
+
+import java.util.List;
+
+import org.springframework.data.repository.CrudRepository;
+
+import com.example.policy.model.Resource;
+
+public interface ResourceRepository extends CrudRepository <Resource,Long> {
+
+	List<Resource> findAll();
+}
