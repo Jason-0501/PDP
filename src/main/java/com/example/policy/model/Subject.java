@@ -3,8 +3,6 @@ package com.example.policy.model;
 
 import java.sql.Time;
 
-import org.springframework.data.relational.core.mapping.Table;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
