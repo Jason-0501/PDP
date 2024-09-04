@@ -8,9 +8,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,15 +17,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Policy {
-	
+public class AnyOf {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
-    private boolean effect;
-    
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "target_id", referencedColumnName = "id")
-	private Target target;
+	private long id;
+	
+    @OneToMany(mappedBy = "anyOf", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<AllOf> allOf;
 }

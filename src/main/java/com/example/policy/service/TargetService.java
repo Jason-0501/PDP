@@ -28,9 +28,7 @@ public class TargetService {
 	public Optional<Target> updateTarget(Long id, Target target) {
 		 return targetRepository.findById(id)
 	                .map(existingtarget -> {
-	                    existingtarget.setDesignater(target.getDesignater());
-	                    existingtarget.setValue(target.getValue());
-	                    existingtarget.setOperator(target.getOperator());
+	                    existingtarget.setAnyOf(target.getAnyOf());
 	                    return targetRepository.save(existingtarget);
 	                });
 	}
