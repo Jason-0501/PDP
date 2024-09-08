@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class Policy {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
     private boolean effect;
@@ -30,4 +30,8 @@ public class Policy {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "target_id", referencedColumnName = "id")
 	private Target target;
+    
+    public boolean evaluate(RequestContext context) throws Exception{
+    	return target.evaluate(context);
+    }
 }

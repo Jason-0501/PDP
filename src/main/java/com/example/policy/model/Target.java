@@ -20,10 +20,14 @@ import lombok.NoArgsConstructor;
 public class Target {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
 	@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "anyOf_id", referencedColumnName = "id")
 	private AnyOf anyOf; 
+	
+	public boolean evaluate(RequestContext context) throws Exception {
+		return anyOf.evaluate(context);
+	}
 }
