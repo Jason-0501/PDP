@@ -2,12 +2,10 @@ package com.example.policy.repository;
 
 import java.util.List;
 
-import org.springframework.data.repository.CrudRepository;
-
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.policy.model.Policy;
-import com.example.policy.model.Target;
-public interface PolicyRepository extends CrudRepository <Policy , Long> {
+public interface PolicyRepository extends JpaRepository <Policy , Long> {
 
 	List<Policy> findAll();
 }

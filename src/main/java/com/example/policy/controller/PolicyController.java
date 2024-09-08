@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.policy.model.Policy;
+import com.example.policy.model.RequestContext;
 import com.example.policy.service.PolicyService;
 
 @RestController
@@ -55,6 +56,16 @@ public class PolicyController {
 	 public void deletePolicy(@PathVariable Long id) {
 		 policyService.deletePolicy(id);
 
+	 }
+	 
+	 @PostMapping("/check")
+	 public boolean checkPolicies(@RequestBody RequestContext context) throws Exception {
+		 List<Policy> set = policyService.getAllPolicies();
+		 for(Policy s : set) {
+			 if(!s.evaluate(context)) return false;
+		 }
+		 
+		 return true;
 	 }
 	 
 }
