@@ -1,0 +1,6 @@
+model結構:
+  policy->target->AnyOf->AllOf->match
+
+每個class裡會有evaluate去呼叫下一層的evaluate
+在policyController裡有寫一個check的controller可以測試
+輸入為RequestContext型別，可以在model找到
