@@ -38,9 +38,9 @@ public class AllOf {
 	public boolean evaluate(RequestContext context) throws Exception {
         for (Match match : matches) {
             if (!match.evaluate(context)) {
-                return false; // 如果有一个 Match 不满足条件，返回 false
+                return false; //如果有一個Match不滿足條件，返回false 
             }
         }
-        return true; // 如果所有 Match 都满足条件，返回 true
+        return true; // 如果所有Match都滿足條件，返回true
     }
 }

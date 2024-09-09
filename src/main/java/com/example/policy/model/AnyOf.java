@@ -30,9 +30,9 @@ public class AnyOf {
     public boolean evaluate(RequestContext context) throws Exception {
         for (AllOf allOf : allOfs) {
             if (allOf.evaluate(context)) {
-                return true; // 只要有一个 AllOf 返回 true
+                return true; // 只要有一個AllOf返回true
             }
         }
-        return false; // 如果没有任何一个 AllOf 返回 true，返回 false
+        return false; // 如果沒有任何一個AllOf返回true，返回false
     }
 }

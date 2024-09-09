@@ -15,7 +15,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import com.example.policy.model.RequestContext;
 @Entity
 @Data
 @AllArgsConstructor
@@ -35,7 +35,6 @@ public class Match {
         INTEGER,
         BOOLEAN,
         DOUBLE
-        // 可以根据需要扩展更多类型
     }
 	
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -58,7 +57,7 @@ public class Match {
                     return (Integer) contextValue < Integer.parseInt(attributeValue);
                 }
                 break;
-            // 可以根据需要添加更多运算符逻辑
+          
             default:
                 throw new IllegalArgumentException("Unsupported operator: " + op);
         }
