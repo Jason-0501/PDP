@@ -1,5 +1,9 @@
 package com.example.policy.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -23,9 +27,16 @@ public class Target {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
+	@OneToOne(mappedBy = "target")
+	@JoinColumn(name = "policy_id", referencedColumnName = "id")
+	@JsonIgnore
+	private Policy policy;
+	
 	@OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "anyOf_id", referencedColumnName = "id")
+    @JoinColumn(name = "any_of_id", referencedColumnName = "id")
 	private AnyOf anyOf; 
+	
+	
 	
 	public boolean evaluate(RequestContext context) throws Exception {
 		return anyOf.evaluate(context);

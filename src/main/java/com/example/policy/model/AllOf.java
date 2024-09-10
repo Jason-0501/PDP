@@ -28,11 +28,12 @@ public class AllOf {
 	
 
 	@JsonIgnore
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "anyOf", referencedColumnName = "id")
     private AnyOf anyOf;
 	
-	@OneToMany(mappedBy = "allOf", cascade = CascadeType.ALL)
+	
+	@OneToMany(mappedBy = "allOf", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	private List<Match> matches;
 	
 	public boolean evaluate(RequestContext context) throws Exception {

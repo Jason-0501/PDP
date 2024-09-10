@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -36,10 +37,9 @@ public class Match {
         BOOLEAN,
         DOUBLE
     }
-	
-	@ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+	@ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "allOf", referencedColumnName = "id")
-	@JsonIgnore
     private AllOf allOf;
 	
 	public boolean evaluate(RequestContext context) throws Exception {
