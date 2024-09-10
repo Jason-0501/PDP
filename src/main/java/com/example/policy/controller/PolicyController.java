@@ -23,7 +23,7 @@ import com.example.policy.service.PolicyService;
 @RestController
 @RequestMapping("policies")
 public class PolicyController {
-
+	
 	@Autowired
 	private PolicyService policyService;
 	
@@ -39,33 +39,34 @@ public class PolicyController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
 	}
 	
-	 @PostMapping
-	 @ResponseStatus(HttpStatus.CREATED)
-	 public Policy createPolicy(@RequestBody Policy Policy) {
-	      return policyService.createPolicy(Policy);
-	 }
+	@PostMapping
+	 public ResponseEntity<Policy> createPolicy(@RequestBody Policy Policy) {
+		Policy s = policyService.createPolicy(Policy);
+	    return  ResponseEntity.status(HttpStatus.CREATED).body(s);
+	}
+	
+	
 	 
-	 @PutMapping("/{id}")
-	 public ResponseEntity<Policy> updatePolicy(@PathVariable Long id, @RequestBody Policy Policy) {
-		 Optional<Policy> updatedPolicy = policyService.updatePolicy(id, Policy);
-		 return updatedPolicy.map(updated -> ResponseEntity.ok(updated))
-                 .orElseGet(() -> ResponseEntity.notFound().build());
-	 }
+	@PutMapping("/{id}")
+	public ResponseEntity<Policy> updatePolicy(@PathVariable Long id, @RequestBody Policy Policy) {
+		Optional<Policy> updatedPolicy = policyService.updatePolicy(id, Policy);
+		return updatedPolicy.map(updated -> ResponseEntity.ok(updated))
+	            .orElseGet(() -> ResponseEntity.notFound().build());
+	}
 	 
-	 @DeleteMapping("/{id}")
-	 public void deletePolicy(@PathVariable Long id) {
-		 policyService.deletePolicy(id);
-
-	 }
+	@DeleteMapping("/{id}")
+	public void deletePolicy(@PathVariable Long id) {
+		policyService.deletePolicy(id);
+	}
 	 
-	 @PostMapping("/check")
-	 public boolean checkPolicies(@RequestBody RequestContext context) throws Exception {
-		 List<Policy> set = policyService.getAllPolicies();
-		 for(Policy s : set) {
-			 if(!s.evaluate(context)) return false;
-		 }
+	@PostMapping("/check")
+	public boolean checkPolicies(@RequestBody RequestContext context) throws Exception {
+		List<Policy> set = policyService.getAllPolicies();
+		for(Policy s : set) {
+			if(!s.evaluate(context)) return false;
+		}
 		 
-		 return true;
-	 }
-	 
+		return true;
+	}
+ 
 }
