@@ -4,6 +4,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+###ㄘㄨㄚˋ請不要上傳 application.properties
+*.properties
 ### STS ###
 .apt_generated
 .classpath
