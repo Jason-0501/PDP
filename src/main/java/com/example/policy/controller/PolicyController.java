@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.policy.model.Match;
 import com.example.policy.model.Policy;
 import com.example.policy.model.RequestContext;
 import com.example.policy.service.PolicyService;
@@ -55,8 +56,14 @@ public class PolicyController {
 	}
 	 
 	@DeleteMapping("/{id}")
-	public void deletePolicy(@PathVariable Long id) {
-		policyService.deletePolicy(id);
+	public ResponseEntity<Void> deletePolicy(@PathVariable Long id) {
+		Optional<Policy> policy = policyService.getPolicyById(id);
+		if (policy.isPresent()) {
+			policyService.deletePolicy(id);
+			return ResponseEntity.noContent().build();
+		}else {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();  // 404 Not Found
+	    }
 	}
 	 
 	@PostMapping("/check")

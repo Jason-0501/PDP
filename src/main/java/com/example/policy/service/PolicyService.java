@@ -57,6 +57,7 @@ public class PolicyService {
 	                .map(existingpolicy -> {
 	                    existingpolicy.setEffect(policy.isEffect());
 	                    existingpolicy.setTarget(policy.getTarget());
+	                    existingpolicy.setName(policy.getName());
 	                    return policyRepository.save(existingpolicy);
 	                });
 	}

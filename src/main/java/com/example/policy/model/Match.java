@@ -35,13 +35,27 @@ public class Match {
         STRING,
         INTEGER,
         BOOLEAN,
-        DOUBLE
+        DOUBLE;
+		public static DataType fromInt(int value) {
+		    switch (value) {
+		        case 0: return STRING;
+		        case 1: return INTEGER;
+		        case 2: return BOOLEAN;
+		        case 3: return DOUBLE;
+		        default: throw new IllegalArgumentException("Invalid data type value: " + value);
+		    }
+		} 
+        
     }
     @JsonIgnore
 	@ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "allOf", referencedColumnName = "id")
     private AllOf allOf;
 	
+    public void setDataType(int dataTypeValue) {
+        this.dataType = DataType.fromInt(dataTypeValue);
+    }
+    
 	public boolean evaluate(RequestContext context) throws Exception {
 		Object contextValue = getAttributeValueFromContext(context,designater);
         switch (op) {
