@@ -1,5 +1,6 @@
 package com.example.policy.controller;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +21,12 @@ import com.example.policy.service.AllOfService;
 @RequestMapping("allof")
 public class AllOfController {
 	
-	@Autowired
+	@Autowired	
 	private AllOfService allOfService;
 	
 	@PostMapping
-	public ResponseEntity<AllOf> createAllOf(@RequestBody AllOf requestAllOf){
-		AllOf allOf = allOfService.createAllOf(requestAllOf);
+	public ResponseEntity<AllOf> createAllOf(@RequestBody Map<String,Integer> requestMap){
+		AllOf allOf = allOfService.createAllOf(requestMap);
 		return (ResponseEntity<AllOf>) ResponseEntity.status(HttpStatus.CREATED).body(allOf);
 	}
 	
