@@ -2,7 +2,6 @@ package com.example.policy.model;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -14,7 +13,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
@@ -25,29 +23,20 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Policy {
+public class PolicySet {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
-	@Column(unique = true)
 	private String name;
 	
-    private boolean effect;
-    
+	@OneToMany(mappedBy = "policySet", cascade = CascadeType.ALL)
+	@JsonManagedReference
+	private List<Policy> policies;
+	
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="target_id", referencedColumnName = "id")
-	private Target target;
-    
-    
-    
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "policySet_id", referencedColumnName = "id",nullable = true)
-    @JsonBackReference
-    private PolicySet policySet;
-    
-    public boolean evaluate(RequestContext context) throws Exception{
-    	return target.evaluate(context);
-    }
+    @JoinColumn(name="resource_id", referencedColumnName = "id")
+	private Resource resource;
+	
 }

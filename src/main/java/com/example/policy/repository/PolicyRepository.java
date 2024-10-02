@@ -10,4 +10,5 @@ public interface PolicyRepository extends JpaRepository <Policy , Long> {
 
 	List<Policy> findAll();
 	Optional<Policy> findPolicyByName(String name);
+	
 }
