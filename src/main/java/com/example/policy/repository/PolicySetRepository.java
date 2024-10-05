@@ -8,5 +8,5 @@ import com.example.policy.model.PolicySet;
 
 public interface PolicySetRepository extends JpaRepository<PolicySet, Long> {
 
-	Optional<PolicySet> findByResourceType(String type);
+	Optional<PolicySet> findByResourceName(String name);
 }

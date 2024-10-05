@@ -39,21 +39,22 @@ public class PolicySetController {
         return policySet.map(ps ->{
         	// 創建一個 Map 並將 resourceType 和 policies 放入其中
             Map<String, Object> response = new HashMap<>();
+            response.put("PolicySetName", ps.getName());
             response.put("resourceName", ps.getResource());  // 取得 Resource 的 type
-            response.put("policies", ps.getPolicies());  // 取得 policies 列表
+            response.put("Policies", ps.getPolicies());  // 取得 policies 列表
 
             return ResponseEntity.ok(response);
         }).orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/type/{type}")
-    public ResponseEntity<Map<String, Object>> getPolicySetByType(@PathVariable String type) {
-        Optional<PolicySet> policySet = policySetService.getPolicySetByResourceType(type);
+    @GetMapping("/resourceName/{name}")
+    public ResponseEntity<Map<String, Object>> getPolicySetByType(@PathVariable String name) {
+        Optional<PolicySet> policySet = policySetService.getPolicySetByResourceName(name);
        
         return policySet.map(ps ->{
         	// 創建一個 Map 並將 resourceType 和 policies 放入其中
             Map<String, Object> response = new HashMap<>();
-            response.put("resourceType", ps.getResource().getType());  // 取得 Resource 的 type
+            response.put("resourceName", ps.getResource());  // 取得 Resource 的 type
             response.put("policies", ps.getPolicies());  // 取得 policies 列表
 
             return ResponseEntity.ok(response);

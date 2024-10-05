@@ -10,5 +10,5 @@ import com.example.policy.model.Resource;
 public interface ResourceRepository extends JpaRepository <Resource,Long> {
 
 	List<Resource> findAll();
-	 Optional<Resource> findByType(String type);
+	 Optional<Resource> findByName(String name);
 }
