@@ -1,9 +1,11 @@
 package com.example.policy.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,8 +52,8 @@ public class PolicySetService {
 	      return policySetRepository.findById(id);
 	  }
 	
-	public Optional<PolicySet> getPolicySetByResourceType(String type){
-		return policySetRepository.findByResourceType(type);
+	public Optional<PolicySet> getPolicySetByResourceName(String name){
+		return policySetRepository.findByResourceName(name);
 	}
 	
 	 // 創建新的 PolicySet
@@ -59,25 +61,27 @@ public class PolicySetService {
 	public PolicySet createPolicySet(PolicySet policySet) {
 	      // 確保 policies 被正確處理
 		
-		String policies = policySet.getName();
-		policySet.setName(policies);
+		String policySetName = policySet.getName();
+		System.out.println(policySet.getResource().getName());
+		policySet.setName(policySetName);
 		policySet.setPolicies(null);
-		policySet.setResource(null);
 		
-//        List<Policy> policies = policySet.getPolicies();
-//        List<Policy> outputPolicies = new ArrayList<>();
-//        for(Policy p : policies) {
-//        	Optional<Policy> policy = policyRepository.findPolicyByName(p.getName());
-//        	if(policy.isPresent()) {
-//        		Policy existingPolicy = policy.get();
-//        		existingPolicy.setPolicySet(policySet);
-//        		outputPolicies.add(existingPolicy);
-//        	}
-//        	
-//        }
-//        
-//
-//        policySet.setPolicies(outputPolicies);
+		String resourceName = policySet.getResource().getName();
+		Optional<Resource> resource = resourceRepository.findByName(resourceName);
+		System.out.println(resource);
+		if(resource.isPresent()) {
+			Resource inputReource = new Resource();
+			inputReource.setName(resourceName);
+			inputReource.setRisk_rank(resource.get().getRisk_rank());
+			inputReource.setType(resource.get().getType());
+			inputReource.setPolicySet(policySet);
+			policySet.setResource(inputReource);
+		}
+		else {
+  		  throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found");
+  	    }
+		
+	
         // 保存 PolicySet 並返回
         return policySetRepository.save(policySet);
     }
@@ -85,15 +89,39 @@ public class PolicySetService {
     // 更新 PolicySet
     public PolicySet updatePolicySet(Long id, PolicySet newPolicySet) {
         return policySetRepository.findById(id).map(policySet -> {
-            // 檢查更新後 resource 的 type 是否與現有的 PolicySet 資料庫中的相符
+        	
           List<Policy> policies = newPolicySet.getPolicies();
           List<Policy> outputPolicies = new ArrayList<>();
+          String policySetResourceName = policySet.getResource().getName();
+          boolean sameResourceName = false;
+          
+          
           for(Policy p : policies) {
         	  Optional<Policy> policy = policyRepository.findPolicyByName(p.getName());
-
+        	  
+  
+        	 
       
         	  if(policy.isPresent()) {
         		  Policy existingPolicy = policy.get();
+        		  // 使用 Stream API 來簡化 Matches 的遍歷，取得所有 attributeValue 的值
+        	        List<String> attributeValue =  existingPolicy.getTarget().getAnyOf().getAllOfs().stream()  // 展開 allOfs 列表
+        	                .flatMap(allOf -> allOf.getMatches().stream())  // 展開 matches 列表
+        	                .map(Match::getAttributeValue)  // 取得每個 match 裡的 attributeValue
+        	                .collect(Collectors.toList()) ; // 收集結果到一個 List
+        	                  // 如果 target 或 anyOf 是 null，返回空列表
+
+        	        // 印出所有的 attributeValue
+        	        System.out.println(attributeValue);
+        	        //檢查attributeValue跟resourceName有沒有一樣
+        	        for(String av : attributeValue) {
+        	        	if(av.equals(policySetResourceName)) {
+        	        		sameResourceName = true;
+        	        	}
+        	        }
+        	      if(sameResourceName == false){
+        	    	  throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This policy's resourcename doesn't belong to this policyset");
+        	      }
         		  if (existingPolicy.getPolicySet() == null || !existingPolicy.getPolicySet().equals(policySet)) {
                       existingPolicy.setPolicySet(policySet);
                       policyRepository.save(existingPolicy);
@@ -106,7 +134,6 @@ public class PolicySetService {
         	  }
           }
             policySet.setPolicies(outputPolicies);
-            policySet.setResource(newPolicySet.getResource());
             return policySetRepository.save(policySet);
         }).orElseGet(() -> {
             newPolicySet.setId(id);

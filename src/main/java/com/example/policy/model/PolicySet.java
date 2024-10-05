@@ -3,6 +3,7 @@ package com.example.policy.model;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -37,6 +38,18 @@ public class PolicySet {
 	
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="resource_id", referencedColumnName = "id")
+    @JsonManagedReference
 	private Resource resource;
+    
+    @Override
+    public String toString() {
+        return "PolicySet{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                // 不要包含 resource 完整信息，避免無限遞迴
+                // 可以只打印 resource 的部分信息，比如 id
+                ", resourceId=" + (resource != null ? resource.getId() : "null") +
+                '}';
+    }
 	
 }
