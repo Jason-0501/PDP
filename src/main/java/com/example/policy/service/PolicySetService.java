@@ -2,6 +2,7 @@ package com.example.policy.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -70,12 +71,8 @@ public class PolicySetService {
 		Optional<Resource> resource = resourceRepository.findByName(resourceName);
 		System.out.println(resource);
 		if(resource.isPresent()) {
-			Resource inputReource = new Resource();
-			inputReource.setName(resourceName);
-			inputReource.setRisk_rank(resource.get().getRisk_rank());
-			inputReource.setType(resource.get().getType());
-			inputReource.setPolicySet(policySet);
-			policySet.setResource(inputReource);
+
+			policySet.setResource(resource.get());
 		}
 		else {
   		  throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found");
@@ -134,6 +131,8 @@ public class PolicySetService {
         	  }
           }
             policySet.setPolicies(outputPolicies);
+            
+            policySet.setResource(newPolicySet.getResource());
             return policySetRepository.save(policySet);
         }).orElseGet(() -> {
             newPolicySet.setId(id);
@@ -142,7 +141,29 @@ public class PolicySetService {
     }
 
     // 刪除 PolicySet
+    public boolean deletePolicyFromPolicySet(Long id,Long policyId) {
+   	 Optional<PolicySet> policySet=policySetRepository.findById(id);
+   	 Optional<Policy> policy = policyRepository.findById(policyId);
+   	 if(policySet.isPresent()) {
+   		 List<Policy> policies = policySet.get().getPolicies();
+   		return policies.remove(policy);
+   		 
+   	 }
+       return false;
+   }
     public void deletePolicySet(Long id) {
+    	 Optional<PolicySet> policySet=policySetRepository.findById(id);
+    	 if(policySet.isPresent()) {
+    		List<Policy> policy = policySet.get().getPolicies();
+    		Resource resource = policySet.get().getResource();
+    		resource.setPolicySet(null);
+    		Iterator<Policy> policies = policy.iterator();
+ 	        while (policies.hasNext()) {
+ 	        	Policy p = policies.next();
+ 	        	policies.remove(); 
+ 	        }
+    		 
+    	 }
         policySetRepository.deleteById(id);
     }
 }

@@ -36,7 +36,7 @@ public class PolicySet {
 	@JsonManagedReference
 	private List<Policy> policies;
 	
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name="resource_id", referencedColumnName = "id")
     @JsonManagedReference
 	private Resource resource;
