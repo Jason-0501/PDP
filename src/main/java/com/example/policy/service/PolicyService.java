@@ -10,6 +10,7 @@ import com.example.policy.model.AllOf;
 import com.example.policy.model.AnyOf;
 import com.example.policy.model.Match;
 import com.example.policy.model.Policy;
+import com.example.policy.model.PolicySet;
 import com.example.policy.model.Target;
 import com.example.policy.repository.AllOfRepository;
 import com.example.policy.repository.AnyOfRepository;
@@ -30,7 +31,8 @@ public class PolicyService {
 	private AllOfRepository allOfRepository;
 	@Autowired
 	private MatchRepository matchRepository;
-	
+	@Autowired
+	private PolicySetService policySetService;
 	public List<Policy> getAllPolicies(){
 		return policyRepository.findAll();
 	}
@@ -62,6 +64,9 @@ public class PolicyService {
 	                });
 	}
 	public void deletePolicy(Long id) {
-		 policyRepository.deleteById(id);
+		 Optional<Policy> policy = policyRepository.findById(id);
+		 PolicySet policySet = policy.get().getPolicySet();
+		 policySet.getPolicies().remove(policy.get());
+		 policyRepository.delete(policy.get());
 	}
 }
