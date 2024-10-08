@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.policy.model.AllOf;
 import com.example.policy.model.AnyOf;
@@ -16,6 +18,7 @@ import com.example.policy.repository.AllOfRepository;
 import com.example.policy.repository.AnyOfRepository;
 import com.example.policy.repository.MatchRepository;
 import com.example.policy.repository.PolicyRepository;
+import com.example.policy.repository.PolicySetRepository;
 import com.example.policy.repository.TargetRepository;
 
 @Service
@@ -33,6 +36,8 @@ public class PolicyService {
 	private MatchRepository matchRepository;
 	@Autowired
 	private PolicySetService policySetService;
+	@Autowired
+	private PolicySetRepository policySetRepository;
 	public List<Policy> getAllPolicies(){
 		return policyRepository.findAll();
 	}
@@ -65,8 +70,19 @@ public class PolicyService {
 	}
 	public void deletePolicy(Long id) {
 		 Optional<Policy> policy = policyRepository.findById(id);
-		 PolicySet policySet = policy.get().getPolicySet();
-		 policySet.getPolicies().remove(policy.get());
-		 policyRepository.delete(policy.get());
+		 if (policy.isPresent()) {
+		        Policy p = policy.get();
+		        PolicySet policySet = policy.get().getPolicySet();
+		        
+		        if (policySet != null) {
+		            policySet.getPolicies().remove(policy);  // 從 PolicySet 的 Policies 列表中移除
+		            policySetRepository.save(policySet); // 保存變更
+		        }
+		        
+		        // 刪除 Policy
+		        policyRepository.delete(p);
+		    } else {
+		        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Policy not found");
+		    }
 	}
 }

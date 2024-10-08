@@ -132,7 +132,7 @@ public class PolicySetService {
           }
             policySet.setPolicies(outputPolicies);
             
-            policySet.setResource(newPolicySet.getResource());
+            policySet.setResource(policySet.getResource());
             return policySetRepository.save(policySet);
         }).orElseGet(() -> {
             newPolicySet.setId(id);
@@ -141,29 +141,48 @@ public class PolicySetService {
     }
 
     // 刪除 PolicySet
-    public boolean deletePolicyFromPolicySet(Long id,Long policyId) {
-   	 Optional<PolicySet> policySet=policySetRepository.findById(id);
-   	 Optional<Policy> policy = policyRepository.findById(policyId);
-   	 if(policySet.isPresent()) {
-   		 List<Policy> policies = policySet.get().getPolicies();
-   		return policies.remove(policy);
-   		 
-   	 }
-       return false;
-   }
+    public boolean deletePolicyFromPolicySet(Long id, Long policyId) {
+        Optional<PolicySet> policySetOpt = policySetRepository.findById(id);
+        Optional<Policy> policyOpt = policyRepository.findById(policyId);
+
+        if (policySetOpt.isPresent() && policyOpt.isPresent()) {
+            PolicySet policySet = policySetOpt.get();
+            Policy policy = policyOpt.get();
+
+            // 從 PolicySet 的 Policies 列表中移除指定的 Policy
+            boolean removed = policySet.getPolicies().remove(policy);
+
+            if (removed) {
+                // 更新並保存 PolicySet
+            	policy.setPolicySet(null);
+                policyRepository.save(policy);
+                policySetRepository.save(policySet);
+                return true;  // 成功更新
+            }
+        }
+
+        return false;  // 找不到相應的 Policy 或 PolicySet
+    }
     public void deletePolicySet(Long id) {
     	 Optional<PolicySet> policySet=policySetRepository.findById(id);
     	 if(policySet.isPresent()) {
-    		List<Policy> policy = policySet.get().getPolicies();
-    		Resource resource = policySet.get().getResource();
-    		resource.setPolicySet(null);
-    		Iterator<Policy> policies = policy.iterator();
- 	        while (policies.hasNext()) {
- 	        	Policy p = policies.next();
- 	        	policies.remove(); 
- 	        }
-    		 
-    	 }
-        policySetRepository.deleteById(id);
-    }
-}
+    		 PolicySet existingPolicySet = policySet.get();
+    	        
+    	        // 解除 Resource 與 PolicySet 的關聯
+    	        Resource resource = existingPolicySet.getResource();
+    	        if (resource != null) {
+    	            resource.setPolicySet(null);
+    	            resourceRepository.save(resource); // 保存 Resource 的變更
+    	        }
+
+    	        // 解除所有 Policies 與 PolicySet 的關聯
+    	        List<Policy> policies = new ArrayList<>(existingPolicySet.getPolicies());  // 創建一個新列表來遍歷
+    	        for (Policy policy : policies) {
+    	            existingPolicySet.getPolicies().remove(policy); // 從 PolicySet 的 Policies 列表中移除
+    	            policy.setPolicySet(null);  // 將每個 Policy 的 PolicySet 設為 null
+    	            policyRepository.save(policy);  // 保存變更
+    	        }
+    	        
+    	        // 刪除 PolicySet 本身
+    	        policySetRepository.delete(existingPolicySet);
+}}}

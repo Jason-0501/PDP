@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import com.example.policy.model.PolicySet;
 import com.example.policy.service.PolicySetService;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/policysets")
 public class PolicySetController {
 
@@ -77,6 +79,17 @@ public class PolicySetController {
             return ResponseEntity.ok(updatedPolicySet);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(null);
+        }
+    }
+    
+    // 更新 PolicySet
+    @PutMapping("/{id}/policies/{policyId}")
+    public ResponseEntity<Boolean> deletePolicyFromPolicySet(@PathVariable Long id, @PathVariable Long policyId) {
+        try {
+            boolean updatedPolicySet = policySetService.deletePolicyFromPolicySet(id, policyId);
+            return ResponseEntity.ok(updatedPolicySet);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(false);
         }
     }
 
