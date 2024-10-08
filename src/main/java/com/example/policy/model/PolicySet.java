@@ -32,7 +32,7 @@ public class PolicySet {
 	
 	private String name;
 	
-	@OneToMany(mappedBy = "policySet", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "policySet", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@JsonManagedReference
 	private List<Policy> policies;
 	
