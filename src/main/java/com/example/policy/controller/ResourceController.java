@@ -21,6 +21,7 @@ import com.example.policy.service.ResourceService;
 
 @RestController
 @RequestMapping("resources")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ResourceController {
 
 	@Autowired
