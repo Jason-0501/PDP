@@ -1,6 +1,7 @@
 package com.example.policy.model;
 
 import java.lang.reflect.Field;
+import java.sql.Time;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -35,13 +36,15 @@ public class Match {
         STRING,
         INTEGER,
         BOOLEAN,
+        TIME,
         DOUBLE;
 		public static DataType fromInt(int value) {
 		    switch (value) {
 		        case 0: return STRING;
 		        case 1: return INTEGER;
 		        case 2: return BOOLEAN;
-		        case 3: return DOUBLE;
+		        case 3: return TIME;
+		        case 4: return DOUBLE;
 		        default: throw new IllegalArgumentException("Invalid data type value: " + value);
 		    }
 		} 
@@ -61,17 +64,52 @@ public class Match {
         switch (op) {
             case "equals":
                 return attributeValue.equals(contextValue);
+            case "not equals":
+            	return !attributeValue.equals(contextValue);
             case "greaterThan":
                 if (dataType == DataType.INTEGER && contextValue instanceof Integer) {
                     return (Integer) contextValue >Integer.parseInt(attributeValue) ;
+                }
+                if (dataType == DataType.DOUBLE && contextValue instanceof Double) {
+                    return (Double) contextValue > Double.parseDouble(attributeValue) ;
+                }
+                if (dataType == DataType.TIME && contextValue instanceof Time) {
+                    return Time.valueOf((String) contextValue).getTime()  > Time.valueOf(attributeValue).getTime() ;
+                }
+                break;
+            case "greaterThanOrEqual":
+                if (dataType == DataType.INTEGER && contextValue instanceof Integer) {
+                    return (Integer) contextValue >=Integer.parseInt(attributeValue) ;
+                }
+                if (dataType == DataType.DOUBLE && contextValue instanceof Double) {
+                    return (Double) contextValue >= Double.parseDouble(attributeValue) ;
+                }
+                if (dataType == DataType.TIME && contextValue instanceof Time) {
+                    return Time.valueOf((String) contextValue).getTime()  >= Time.valueOf(attributeValue).getTime() ;
                 }
                 break;
             case "lessThan":
                 if (dataType == DataType.INTEGER && contextValue instanceof Integer) {
                     return (Integer) contextValue < Integer.parseInt(attributeValue);
                 }
+                if (dataType == DataType.DOUBLE && contextValue instanceof Double) {
+                    return (Double) contextValue < Double.parseDouble(attributeValue) ;
+                }
+                if (dataType == DataType.TIME && contextValue instanceof Time) {
+                    return Time.valueOf((String) contextValue).getTime()  < Time.valueOf(attributeValue).getTime() ;
+                }
                 break;
-          
+            case "lessThanOrEqual":
+                if (dataType == DataType.INTEGER && contextValue instanceof Integer) {
+                    return (Integer) contextValue <= Integer.parseInt(attributeValue);
+                }
+                if (dataType == DataType.DOUBLE && contextValue instanceof Double) {
+                    return (Double) contextValue <= Double.parseDouble(attributeValue) ;
+                }
+                if (dataType == DataType.TIME && contextValue instanceof Time) {
+                    return Time.valueOf((String) contextValue).getTime()  <= Time.valueOf(attributeValue).getTime() ;
+                }
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operator: " + op);
         }

@@ -21,6 +21,7 @@ import com.example.policy.model.Match;
 import com.example.policy.model.Policy;
 import com.example.policy.model.RequestContext;
 import com.example.policy.service.PolicyService;
+import com.example.policy.service.PolicySetService;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
@@ -29,6 +30,9 @@ public class PolicyController {
 	
 	@Autowired
 	private PolicyService policyService;
+	
+	@Autowired
+	private PolicySetService policySetService; 
 	
 	@GetMapping
 	public List<Policy> getAllPolicies(){
@@ -70,7 +74,7 @@ public class PolicyController {
 	 
 	@PostMapping("/check")
 	public boolean checkPolicies(@RequestBody RequestContext context) throws Exception {
-		List<Policy> set = policyService.getAllPolicies();
+		List<Policy> set = policySetService.getPolicySetByResourceName(context.getResource().getName()).get().getPolicies();
 		for(Policy s : set) {
 			if(!s.evaluate(context)) return false;
 		}
