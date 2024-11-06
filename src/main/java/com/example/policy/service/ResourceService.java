@@ -22,18 +22,26 @@ public class ResourceService {
 	public Optional<Resource> getResourceById(Long id) {
 	      return resourceRepository.findById(id);
 	  }
+	
+	public Optional<Resource> getResourceByName(String name){
+		return resourceRepository.findByName(name);
+	}
 	public Resource createResource(Resource resource){
 		return resourceRepository.save(resource);
 	}
 	
 	public Optional<Resource> updateResource(Long id, Resource resource) {
-		 return resourceRepository.findById(id)
-	                .map(existingResource -> {
-	                    existingResource.setType(resource.getType());
-	                    existingResource.setRisk_rank(resource.getRisk_rank());
-	                    return resourceRepository.save(existingResource);
-	                });
+	    return resourceRepository.findById(id)
+	        .map(existingResource -> {
+	            if (resource.isAbacEnabled() != existingResource.isAbacEnabled()) {
+	                existingResource.setAbacEnabled(resource.isAbacEnabled());
+	            }
+	            return resourceRepository.save(existingResource);
+	        });
 	}
+
+
+
 	public void deleteResource(Long id) {
 		 resourceRepository.deleteById(id);
 	}

@@ -29,6 +29,7 @@ public class Resource {
 	private Long id;
     private String type;
     private String risk_rank;
+    private boolean abacEnabled = false;
     
     @Column(unique = true)
     private String name;
