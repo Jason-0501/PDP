@@ -35,9 +35,9 @@ public class AnyOf {
     @OneToMany(mappedBy = "anyOf", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	private List<AllOf> allOfs;
     
-    public boolean evaluate(RequestContext context) throws Exception {
+    public boolean evaluate(RequestContext context,boolean abacEnabled) throws Exception {
         for (AllOf allOf : allOfs) {
-            if (allOf.evaluate(context)) {
+            if (allOf.evaluate(context,abacEnabled)) {
                 return true; // 只要有一個AllOf返回true
             }
         }

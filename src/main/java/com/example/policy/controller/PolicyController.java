@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.policy.model.Match;
 import com.example.policy.model.Policy;
 import com.example.policy.model.RequestContext;
+import com.example.policy.model.Resource;
 import com.example.policy.service.PolicyService;
 import com.example.policy.service.PolicySetService;
+import com.example.policy.service.ResourceService;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
@@ -33,6 +35,8 @@ public class PolicyController {
 	
 	@Autowired
 	private PolicySetService policySetService; 
+	
+	@Autowired ResourceService resourceService;
 	
 	@GetMapping
 	public List<Policy> getAllPolicies(){
@@ -74,12 +78,19 @@ public class PolicyController {
 	 
 	@PostMapping("/check")
 	public boolean checkPolicies(@RequestBody RequestContext context) throws Exception {
-		List<Policy> set = policySetService.getPolicySetByResourceName(context.getResource().getName()).get().getPolicies();
+		
+		Optional<Resource> resource = resourceService.getResourceByName(context.getResource().getName());
+		
+		
+		List<Policy> set = resource.get().getPolicySet().getPolicies();
 		for(Policy s : set) {
-			if(!s.evaluate(context)) return false;
+			if(!s.evaluate(context,resource.get().isAbacEnabled())) return false;
+		
 		}
-		 
 		return true;
+		
+		
+		
 	}
  
 }

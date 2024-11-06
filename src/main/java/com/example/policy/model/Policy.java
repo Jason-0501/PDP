@@ -47,7 +47,7 @@ public class Policy {
     @JsonBackReference
     private PolicySet policySet;
     
-    public boolean evaluate(RequestContext context) throws Exception{
-    	return target.evaluate(context);
+    public boolean evaluate(RequestContext context,boolean abacEnabled) throws Exception{
+    	return target.evaluate(context,abacEnabled);
     }
 }

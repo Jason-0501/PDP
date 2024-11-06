@@ -38,7 +38,7 @@ public class Target {
 	
 	
 	
-	public boolean evaluate(RequestContext context) throws Exception {
-		return anyOf.evaluate(context);
+	public boolean evaluate(RequestContext context,boolean abacEnabled) throws Exception {
+		return anyOf.evaluate(context,abacEnabled);
 	}
 }

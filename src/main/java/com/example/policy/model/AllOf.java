@@ -36,11 +36,22 @@ public class AllOf {
 	@OneToMany(mappedBy = "allOf", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	private List<Match> matches;
 	
-	public boolean evaluate(RequestContext context) throws Exception {
+	public boolean evaluate(RequestContext context,boolean abacEnabled) throws Exception {
+		
         for (Match match : matches) {
-            if (!match.evaluate(context)) {
-                return false; //如果有一個Match不滿足條件，返回false 
-            }
+        	if(!abacEnabled) {
+    			if(!match.getDesignater().equalsIgnoreCase("subject.role")) {
+    				continue;
+    			}
+    			if (!match.evaluate(context)) {
+                    return false; //如果有一個Match不滿足條件，返回false 
+                }
+    		}else {
+    			if (!match.evaluate(context)) {
+                    return false; //如果有一個Match不滿足條件，返回false 
+                }
+    		}
+            
         }
         return true; // 如果所有Match都滿足條件，返回true
     }
